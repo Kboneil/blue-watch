@@ -272,7 +272,7 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
       controller.slide = 'fadeRight';
         console.log(category);
 
-      if (category == undefined) {
+      if (category == undefined || category == false) {
         alert ('Please select a category');
         return;
       }
