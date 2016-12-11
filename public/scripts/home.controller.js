@@ -272,10 +272,10 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
       controller.slide = 'fadeRight';
         console.log(category);
 
-      // if (category[0] == false) {
-      //   alert ('Please check a category');
-      //   return;
-      // }
+      if (category == undefined) {
+        alert ('Please select a category');
+        return;
+      }
 
         //markers to show based on selected category
         controller.showMarkers = [];
@@ -349,12 +349,19 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     }
 controller.searchData=[];
 controller.searchMarkersToshow = [];
+controller.emptySearchResult=false;
 controller.searchResources = function(search){
     controller.searchData.length=0;
     controller.searchMarkersToshow.length=0;
     search = search.toString();
     $http.get('/resource/' + search).then(function(response){
     controller.searchData = response.data;
+    if (controller.searchData.length == 0){
+      var el = angular.element(document.querySelector('#emptySearch'));
+      el.empty();
+      el.append('<p>Sorry your search found empty result. Please try another keyword!</p>');
+      controller.emptySearchResult=true;
+    } else {
 
         controller.searchData.forEach(function(searchedresource){
 
@@ -367,18 +374,6 @@ controller.searchResources = function(search){
                 }
             })
 
-            // controller.markersToSearch.forEach(function(marker){
-            //     if(searchedresource._id == marker.id){
-            //         resource.marker = marker;
-            //         controller.searchMarkersToshow.push(marker.marker);
-            //     }
-            // }); //End of markersToSearch forEach
-            // controller.reviewsToSearch.forEach(function(review){
-            //
-            //     if(searchedresource._id == review.id){
-            //         resource.reviewInfo = review;
-            //     }
-            // }); //End of reviewsToSearch forEach
         }); //End of searchData forEach
 
 
@@ -387,6 +382,8 @@ controller.searchResources = function(search){
         //show markers of selected category
         controller.showVisible(controller.searchMarkersToshow);
         controller.selectedCategoryToggle ();
+
+      };
 
     });  //End of get resources
 }; //End of searchResources
