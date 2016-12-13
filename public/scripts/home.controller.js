@@ -92,7 +92,7 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     //loads all the resources on page load
     controller.getResources = function() {
 
-        $http.get('/resource').then(function(response) {
+        ResourcesService.getResources().then(function(response) {
 
             controller.resourcesToSearch =angular.copy(response.data);
             console.log('resources to search',controller.resourcesToSearch);
@@ -132,7 +132,7 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
 
     }; //End of getResources
 
-    var icons = ResourcesService.service.icons;
+    var icons = ResourcesService.icons;
 
     //create marker
     controller.createMarker = function(latinfo, lnginfo, info) {

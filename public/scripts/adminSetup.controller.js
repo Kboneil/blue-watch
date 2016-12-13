@@ -1,7 +1,7 @@
 angular.module('blueWatchApp')
     .controller('AdminSetupController', AdminSetupController);
 
-function AdminSetupController($http, adminservice) {
+function AdminSetupController(adminservice) {
     console.log('AdminSetupController loaded!');
     $(document).ready(function() {
         $('[data-toggle="popover"]').popover();
