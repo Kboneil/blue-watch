@@ -151,12 +151,15 @@ router.put('/:id', function(req, res) {
 
 //delete category
 router.delete('/:id', function(req, res) {
+  var oldColor = req.body.oldColor;
+  console.log(req.body);
     Categories.findByIdAndRemove(req.params.id, function(err, destination) {
         if (err) {
             res.sendStatus(500);
             return;
         }
-        res.sendStatus(204);
+
+  res.sendStatus(204);
     });
 });
 
