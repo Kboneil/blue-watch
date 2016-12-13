@@ -2,40 +2,40 @@ angular.module('blueWatchApp')
     .controller('ResourcesController', ResourcesController);
 
 
-function ResourcesController($http, $location, $q, ResourcesService,$scope, adminservice) {
+function ResourcesController($http, $location, $q, ResourcesService, $scope, adminservice) {
 
-  var controller = this;
-  controller.categories = [];
-  controller.resources=[];
+    var controller = this;
+    controller.categories = [];
+    controller.resources = [];
 
+    controller.resourcesService = ResourcesService;
+    controller.customIconInfo = [];
 
-controller.customIconInfo=[];
-
-    //empty modal
-        controller.capturedCompany = '';
-        controller.capturedDescription = '';
-        controller.capturedContact = '';
-        controller.capturedWebsite = '';
-        controller.capturedStreet = '';
-        controller.capturedStreet2 = '';
-        controller.capturedCity = '';
-        controller.capturedState = '';
-        controller.capturedZip = '';
-        controller.capturedCategory = '';
-        controller.capturedId='';
-        controller.iconColor ='';
+    controller.iconColor = '';
 
 
 
-  //whenever controller is loaded, will check to see if user which/if any user is logged in
-  adminservice.normalLoggedin();
+    //whenever controller is loaded, will check to see if user which/if any user is logged in
+    adminservice.normalLoggedin();
 
-  //loads all the false icons on resources page
 
-  //controller to create new resource
-  controller.createresource = function() {
 
-  var address = controller.street + ' ' + controller.city + ' ' + controller.state + ' ' + controller.zip;
+    controller.getResources = function() {
+
+        controller.resourcesService.getResources().then(function(response) {
+            controller.resources = response.data;
+        }, function(error) {
+            console.log('error getting resource', error);
+        });
+    }; //End of getResources
+
+    //display resources on page load
+    controller.getResources();
+
+    //controller to create new resource
+    controller.createresource = function() {
+
+        var address = controller.street + ' ' + controller.city + ' ' + controller.state + ' ' + controller.zip;
 
         controller.verifyAddress(address).then(function(response) {
             var lat = response.lat;
@@ -55,61 +55,56 @@ controller.customIconInfo=[];
                 long: long.toString()
             };
 
-            console.log('body in createresource', body);
-            $http.post('/resource', body).then(function() {
+            controller.resourcesService.createresource(body).then(function() {
                 controller.getResources();
-
-            controller.company = '';
-            controller.description = '';
-            controller.contact = '';
-            controller.website = '';
-            controller.street = '';
-            controller.street2 = '';
-            controller.city = '';
-            controller.state = '';
-            controller.zip = '';
-            controller.category = '';
+                //empty form after resource is added
+                controller.company = '';
+                controller.description = '';
+                controller.contact = '';
+                controller.website = '';
+                controller.street = '';
+                controller.street2 = '';
+                controller.city = '';
+                controller.state = '';
+                controller.zip = '';
+                controller.category = '';
 
             }, function(error) {
                 console.log('error creating resource', error);
-            });
-        });
+            }); //End of createResourceService
 
-  };
-    controller.getResources = function() {
+        }); //End of verify address
 
-        $http.get('/resource').then(function(response) {
-            controller.resources = response.data;
-            console.log(response);
-        });
-    };
-    controller.getResources();
+    }; //End of createResource
 
+    //loads all the false icons on resources page
     controller.getIcons = function() {
-        controller.customIconInfo.length=0;
+        controller.customIconInfo.length = 0;
 
-        $http.get('/icons').then(function(response) {
+        controller.resourcesService.getIcons().then(function(response) {
             controller.customIconInfo = response.data;
-            console.log('controller.customIconInfo ', controller.customIconInfo);
-
+        }, function(error) {
+            console.log('error getting icons', error);
         });
 
-    }; //End of getResources
+    }; //End of getIcons
 
+    //get icons on page loads
     controller.getIcons();
 
 
     controller.getcategories = function() {
-        $http.get('/categories').then(function(response) {
-            // console.log(response);
+        controller.resourcesService.getcategories().then(function(response) {
             controller.categories = response.data;
-            console.log(controller.categories);
+        }, function(error) {
+            console.log('error getting categories', error);
         });
-    };
+    }; //End of getcategories
 
-
+    //get categories on page loads
     controller.getcategories();
 
+    //capture resource info on modal click
     controller.captureInfo = function(company, description, contact, website, street, street2, city, state, zip, category, id) {
         controller.capturedCompany = company;
         controller.capturedDescription = description;
@@ -127,7 +122,6 @@ controller.customIconInfo=[];
 
     controller.updateResource = function(id) {
         var address = controller.capturedStreet + ' ' + controller.capturedCity + ' ' + controller.capturedState + ' ' + controller.capturedZip;
-        console.log(address);
         controller.verifyAddress(address).then(function(response) {
             var lat = response.lat;
             var long = response.long;
@@ -145,26 +139,42 @@ controller.customIconInfo=[];
                 lat: lat.toString(),
                 long: long.toString()
             };
-            // console.log(id);
 
-            $http.put('/resource/' + id, body).then(function(response) {
+            controller.resourcesService.updateResource(id, body).then(function(response) {
                 controller.getResources();
                 controller.getIcons();
                 controller.getcategories();
+
+                //empty modal after successful update
+                controller.capturedCompany = '';
+                controller.capturedDescription = '';
+                controller.capturedContact = '';
+                controller.capturedWebsite = '';
+                controller.capturedStreet = '';
+                controller.capturedStreet2 = '';
+                controller.capturedCity = '';
+                controller.capturedState = '';
+                controller.capturedZip = '';
+                controller.capturedCategory = '';
+                controller.capturedId = '';
+
+
             }, function(error) {
                 console.log('error editing resource', error);
-            });
-        });
-    };
+            }); //End of updateResourceService
+        }); //End of verifyAddress
+    }; //End of updateResource
+
     controller.findResourceId = function(id) {
         resourceIdToDelete = id;
     };
-    controller.deleteResource = function() {
-        $http.delete('/resource/' + resourceIdToDelete).then(function(response) {
-            console.log(response);
-            controller.getResources();
-        });
 
+    controller.deleteResource = function() {
+        controller.resourcesService.deleteResource(resourceIdToDelete).then(function(response) {
+            controller.getResources();
+        }, function(error) {
+            console.log('error deleting resource', error);
+        }); //End of deleteResource Service
     }; //End deleteResource
 
     controller.createCategory = function() {
@@ -172,46 +182,41 @@ controller.customIconInfo=[];
             categoryName: controller.categoryName,
             color: controller.color
         };
-        console.log(data);
-        $http.post('/categories', data).then(function(response) {
+        controller.resourcesService.createCategory(data).then(function(response) {
             controller.getcategories();
-           controller.getIcons();
+            controller.getIcons();
+            //empty form
+            controller.categoryName='';
+            controller.color='';
         }, function(error) {
             console.log('error creating resource', error);
-        });
+        }); //End of createCategory service
 
     }; //End of createCategory
 
 
 
-    controller.captureOldColor = function(color){
+    controller.captureOldColor = function(color) {
+        controller.oldColor = color;
+    };
 
-    controller.oldColor = color;
-
-    }
-
-//updateCategory function
+    //updateCategory function
     controller.updateCategory = function(category) {
-console.log(category);
 
         var body = {
             categoryName: category.categoryName,
             color: category.newColor,
-            oldColor:category.color
+            oldColor: category.color
         };
         var id = category._id;
 
-        console.log(body);
-
-        $http.put('/categories/' + id, body).then(function(response) {
-          controller.getcategories();
-          controller.getResources();
-          controller.getIcons();
-
-
+        controller.resourcesService.updateCategory(id, body).then(function(response) {
+            controller.getcategories();
+            controller.getResources();
+            controller.getIcons();
         }, function(error) {
             console.log('error editing categories', error);
-        });
+        }); //end of updateCategory service
     }; //end of updateCategory
 
 
@@ -222,13 +227,13 @@ console.log(category);
     };
     // delete category
     controller.deleteCategory = function() {
-        $http.delete('/categories/' + idToDelete).then(function(response) {
+        controller.resourcesService.deleteCategory(idToDelete).then(function(response) {
             controller.getcategories();
             controller.getIcons();
         }, function(error) {
             console.log('error deleting category');
-        });
-    };
+        }); //End of deleteCategory service
+    }; //End of deleteCategory
 
 
     controller.verifyAddress = function(address) {
@@ -254,30 +259,30 @@ console.log(category);
                 }
             });
         });
-  };
+    };
 
 
 
-// other way to show dropdown functionality
+    // other way to show dropdown functionality
 
-//   $('.selected-items-box').bind('click', function(e){
-//     e.stopPropagation();
-//     $('.multiple-select-wrapper .list').toggle('slideDown');
-//   });
-//
-//   $('.multiple-select-wrapper .list').bind('click', function(e){
-//   	e.stopPropagation();
-//     	$('.multiple-select-wrapper .list').slideUp();
-//   });
-//
-//   $(document).bind('click', function(){
-//   	$('.multiple-select-wrapper .list').slideUp();
-//   });
-//
-// controller.selectedColor=function(marker){
-//     controller.capturedMarker=marker;
-//     console.log(marker);
-// }
+    //   $('.selected-items-box').bind('click', function(e){
+    //     e.stopPropagation();
+    //     $('.multiple-select-wrapper .list').toggle('slideDown');
+    //   });
+    //
+    //   $('.multiple-select-wrapper .list').bind('click', function(e){
+    //   	e.stopPropagation();
+    //     	$('.multiple-select-wrapper .list').slideUp();
+    //   });
+    //
+    //   $(document).bind('click', function(){
+    //   	$('.multiple-select-wrapper .list').slideUp();
+    //   });
+    //
+    // controller.selectedColor=function(marker){
+    //     controller.capturedMarker=marker;
+    //     console.log(marker);
+    // }
 
 
 
@@ -291,24 +296,23 @@ console.log(category);
 
 //directive to convert url to correct format
 angular.module('blueWatchApp')
-.directive('httpPrefix', function() {
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, element, attrs, controller) {
-            function ensureHttpPrefix(value) {
-                // Add prefix if we don't have http:// prefix already AND we don't have part of it
-                if(value && !/^(https?):\/\//i.test(value)
-                   && 'http://'.indexOf(value) !== 0 && 'https://'.indexOf(value) !== 0 ) {
-                    controller.$setViewValue('http://' + value);
-                    controller.$render();
-                    return 'http://' + value;
+    .directive('httpPrefix', function() {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function(scope, element, attrs, controller) {
+                function ensureHttpPrefix(value) {
+                    // Add prefix if we don't have http:// prefix already AND we don't have part of it
+                    if (value && !/^(https?):\/\//i.test(value) &&
+                        'http://'.indexOf(value) !== 0 && 'https://'.indexOf(value) !== 0) {
+                        controller.$setViewValue('http://' + value);
+                        controller.$render();
+                        return 'http://' + value;
+                    } else
+                        return value;
                 }
-                else
-                    return value;
+                controller.$formatters.push(ensureHttpPrefix);
+                controller.$parsers.splice(0, 0, ensureHttpPrefix);
             }
-            controller.$formatters.push(ensureHttpPrefix);
-            controller.$parsers.splice(0, 0, ensureHttpPrefix);
-        }
-    };
-});
+        };
+    });

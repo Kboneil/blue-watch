@@ -1,75 +1,73 @@
 angular.module('blueWatchApp')
-.controller('ApprovalController', ApprovalController);
+    .controller('ApprovalController', ApprovalController);
 
-function ApprovalController($http, $location, adminservice) {
+function ApprovalController(adminservice, ReviewsService, ResourcesService) {
     console.log('ApprovalController loaded!');
 
-var review = this;
-review.reviewsArray =[];
-review.resources=[];
+    var review = this;
+    review.reviewsArray = [];
+    review.resources = [];
+    review.reviewsService = ReviewsService;
+    review.resourceService = ResourcesService;
 
-// adminservice.loggedin();
-//whenever controller is loaded, will check to see if user which/if any user is logged in
-adminservice.normalLoggedin();
+    //whenever controller is loaded, will check to see if user which/if any user is logged in
+    adminservice.normalLoggedin();
 
-review.getPendingReviews = function(){
-        $http.get('/reviews').then(function(response){
+    review.getPendingReviews = function() {
+        review.reviewsService.getPendingReviews().then(function(response) {
             review.reviewsArray = response.data;
             review.getResources();
+        }, function(error) {
+            console.log('error getting reviews', error);
         });
+    }; //End of getPendingReviews
 
+    //get pending reviews on load
+    review.getPendingReviews();
 
-}; //End of getPendingReviews
+    review.getResources = function() {
+        review.resourceService.getResources().then(function(response) {
+            review.resources = response.data;
+            review.addCompanyName(review.resources);
+        }, function(error) {
+            console.log('error getting resources', error);
+        });
+    }; //End of getResources
 
-review.getResources = function(){
+    review.addCompanyName = function(resources) {
+        review.reviewsArray.forEach(function(review) {
+            resources.forEach(function(resource) {
+                if (review.resource_id == resource._id) {
+                    review.companyName = resource.company;
+                }
+            });
+        });
+    }; //End of addCompanyName
 
-    $http.get('/resource').then(function(response){
-        review.resources=response.data;
-        review.addCompanyName(review.resources);
+    review.captureInfo = function(reviews) {
+        review.capturedCompanyName = reviews.companyName;
+        review.capturedComments = reviews.comments;
+        review.capturedRating = reviews.rating;
+        review.capturedId = reviews._id;
+    }; //End of capture info on modal click
 
-    });
-
-};
-
-review.getPendingReviews();
-
-
-review.addCompanyName = function(resources){
-
-    review.reviewsArray.forEach(function(review){
-        resources.forEach(function(resource){
-        if(review.resource_id == resource._id){
-            review.companyName = resource.company;
+    review.approvedReview = function(id, comments) {
+        var data = {
+            comments: comments
         }
-    });
-});
-}
-
-review.captureInfo=function(reviews){
-    review.capturedCompanyName=reviews.companyName;
-    review.capturedComments = reviews.comments;
-    review.capturedRating = reviews.rating;
-    review.capturedId = reviews._id;
-};
-
-review.approvedReview = function(id, comments){
-    var data ={
-        comments:comments
-    }
-    $http.put('/reviews/'+id, data).then(function(response){
-        console.log(response.data);
-        review.getPendingReviews();
-    });
-};
-
-review.deleteReview = function(id){
-
-    $http.delete('/reviews/'+id).then(function(response){
+        review.reviewsService.approvedReview(id, data).then(function(response) {
             review.getPendingReviews();
-    });
-};
+        }, function(error) {
+            console.log('error approving review', error);
+        });
+    }; //End of approvedReview
 
+    review.deleteReview = function(id) {
+        review.reviewsService.deleteReview(id).then(function(response) {
+            review.getPendingReviews();
+        }, function(error) {
+            console.log('error deleting review', error);
+        });
+    }; //End of deleteReview
 
-
-
-}// End of ApprovalController
+} // End of ApprovalController
