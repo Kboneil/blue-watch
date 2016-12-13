@@ -38,9 +38,9 @@ router.post('/', function(req, res) {
             'color': color
         }).then(function(color) {
             console.log(color);
-            color.inUse = true;
+            color[0].inUse = true;
 
-            color.save(function(err, updatedInUse) {
+            color[0].save(function(err, updatedInUse) {
                 console.log('color updated!', updatedInUse);
                 if (err) {
                     res.sendStatus(500);
