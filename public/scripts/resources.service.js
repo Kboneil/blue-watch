@@ -108,4 +108,10 @@ function ResourcesService($http) {
         });
     }; //End of deleteCategory
 
+    service.getSearchedResource = function(search){
+      return $http.get('/resource/' + search).then(function(response){
+        return response;
+      });
+    }; //End of getSearchedResource
+
 };

@@ -1,23 +1,25 @@
 angular.module('blueWatchApp')
     .controller('HomeController', HomeController);
 
-function HomeController($http, $location, $scope, ResourcesService, LogoutService) {
+function HomeController($http, $location, $scope, ResourcesService, LogoutService, ReviewsService) {
 
 
     console.log('Home controller');
     var controller = this;
     LogoutService.status = false;
+    controller.reviewsService = ReviewsService;
+    controller.resourceService = ResourcesService;
     //array of all the markers
     controller.markers = [];
     controller.resources;
     controller.selectedCategoryArray;
-    controller.resourcesToSearch=[];
-    controller.markersToSearch =[];
+    controller.resourcesToSearch = [];
+    controller.markersToSearch = [];
     controller.reviewsToSearch = [];
 
 
-    controller.categoryListToggle = function(){
 
+    controller.categoryListToggle = function() {
         controller.changeCategoryList = true;
         controller.changeSelectedCategory = false;
         controller.changeCheckedCategory = false;
@@ -26,7 +28,8 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
         controller.changeBackButton2 = false;
         controller.filterAddress = false;
     };
-    controller.selectedCategoryToggle = function(){
+
+    controller.selectedCategoryToggle = function() {
         controller.changeCategoryList = false;
         controller.changeSelectedCategory = true;
         controller.changeCheckedCategory = false;
@@ -34,9 +37,9 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
         controller.changeBackButton = true;
         controller.changeBackButton2 = false;
         controller.filterAddress = false;
-
     };
-    controller.checkedCategoryToggle = function(){
+
+    controller.checkedCategoryToggle = function() {
         controller.changeCategoryList = false;
         controller.changeSelectedCategory = false;
         controller.changeCheckedCategory = true;
@@ -45,7 +48,8 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
         controller.changeBackButton2 = true;
         controller.filterAddress = false;
     };
-    controller.singleResourceToggle = function(){
+
+    controller.singleResourceToggle = function() {
         controller.changeCategoryList = false;
         controller.changeSelectedCategory = false;
         controller.changeCheckedCategory = false;
@@ -87,45 +91,37 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     //creates the map
     controller.map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-
-
     //loads all the resources on page load
     controller.getResources = function() {
 
-        ResourcesService.getResources().then(function(response) {
-
-            controller.resourcesToSearch =angular.copy(response.data);
-            console.log('resources to search',controller.resourcesToSearch);
+        controller.resourceService.getResources().then(function(response) {
 
             controller.resources = response.data;
 
             controller.resources.forEach(function(info) {
 
-              var id = info._id;
-              $http.get('/publicreviews/'+id).then(function(response) {
+                var id = info._id;
 
+                controller.reviewsService.getPublicReviews(id).then(function(response) {
+                    var totalRating = 0;
+                    info.review = response.data;
+                    info.numberOfReviews = info.review.length;
 
-                  var totalRating=0;
-                  info.review = response.data;
-                  info.numberOfReviews = info.review.length;
-
-                  //make function to create average Rating
-                  if(info.numberOfReviews>0){
-                      info.review.forEach(function(review){
-                          totalRating +=review.rating;
-                          info.averageRating = totalRating/info.numberOfReviews;
-                      });
-                  } else{
-                      info.averageRating = 0;
-                  }
-                  controller.reviewsToSearch.push({id: info._id, reviews: info.review, averageRating:info.averageRating, numberOfReviews:info.numberOfReviews});
-                 });
+                    //make function to create average Rating
+                    if (info.numberOfReviews > 0) {
+                        info.review.forEach(function(review) {
+                            totalRating += review.rating;
+                            info.averageRating = totalRating / info.numberOfReviews;
+                        });
+                    } else {
+                        info.averageRating = 0;
+                    }
+                });
 
                 controller.createMarker(parseFloat(info.lat), parseFloat(info.long), info);
 
             }); //End of for each
 
-            console.log('controller.resources', controller.resources);
             controller.showVisible(controller.markers); //show all markers
 
         }); //end of http get resource
@@ -146,7 +142,7 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
             icon: icons[info.category.color].icon
         });
 
-        info.marker.content ='<div class="infoWindowContent">' + info.description + '</div> Contact: '+info.contact+'</div></div>';
+        info.marker.content = '<div class="infoWindowContent">' + info.description + '</div> Contact: ' + info.contact + '</div></div>';
 
         info.marker.infoWindow = new google.maps.InfoWindow();
 
@@ -157,8 +153,8 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
             controller.showSingleResource(info);
             controller.singleResourceToggle();
 
-            info.marker.infoWindow.setContent('<p><strong>' + info.marker.title +'</strong>'
-            + info.marker.content + '</p>');
+            info.marker.infoWindow.setContent('<p><strong>' + info.marker.title + '</strong>' +
+                info.marker.content + '</p>');
             info.marker.infoWindow.open(controller.map, info.marker);
 
 
@@ -173,11 +169,11 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
 
         });
         controller.markers.push(info.marker);
-        controller.markersToSearch.push({id: info._id, marker: info.marker});
+
     }; //End of createMarker
 
-    controller.showSingleResource = function(resource){
-        console.log(resource);
+    controller.showSingleResource = function(resource) {
+
         controller.selectedResource = resource;
 
         //get review ratings and comments
@@ -211,22 +207,22 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     controller.showVisible = function(controllerMarkers) {
         var bounds = new google.maps.LatLngBounds();
 
-        if(controllerMarkers.length>1){
-        controllerMarkers.forEach(function(marker) {
-            marker.setVisible(true);
-            controller.closeInfoWindow();
-            // extending bounds to contain this visible marker position
-            bounds.extend(marker.getPosition());
-        });
+        if (controllerMarkers.length > 1) {
+            controllerMarkers.forEach(function(marker) {
+                marker.setVisible(true);
+                controller.closeInfoWindow();
+                // extending bounds to contain this visible marker position
+                bounds.extend(marker.getPosition());
+            });
 
-        // setting new bounds to visible markers of
-        controller.map.fitBounds(bounds);
-    }else{
-      controllerMarkers[0].setVisible(true);
-      controller.closeInfoWindow();
-      controller.map.setCenter(controllerMarkers[0].position);
+            // setting new bounds to visible markers of
+            controller.map.fitBounds(bounds);
+        } else {
+            controllerMarkers[0].setVisible(true);
+            controller.closeInfoWindow();
+            controller.map.setCenter(controllerMarkers[0].position);
+        }
     }
-}
     controller.getResources(); //run getResources function
 
 
@@ -239,7 +235,7 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     }
 
     controller.expandCategory = function(category) {
-      controller.slide = 'fadeRight';
+        controller.slide = 'fadeRight';
         //array of markers to show
         controller.showMarkers = [];
 
@@ -269,13 +265,12 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     }
 
     controller.expandCheckedCategory = function(category) {
-      controller.slide = 'fadeRight';
-        console.log(category);
+        controller.slide = 'fadeRight';
 
-      if (category == undefined || category == false) {
-        alert ('Please select a category');
-        return;
-      }
+        if (category == undefined || category == false) {
+            alert('Please select a category');
+            return;
+        }
 
         //markers to show based on selected category
         controller.showMarkers = [];
@@ -294,7 +289,6 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
             }
             return controller.vals;
         }
-        console.log(controller.vals);
 
         controller.checkedCategory = [];
 
@@ -306,91 +300,91 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
                     controller.showMarkers.push(resource.marker);
                 }
             });
-            console.log('Color for checked ', selectedCategoryArray);
+
             var name = controller.resources[0].category.categoryName;
             controller.checkedCategory.push({
                 name: checkedCategory,
                 resources: selectedCategoryArray
             });
-            // console.log('checked category ', controller.checkedCategory);
+
         });
         //hide all markers
         controller.hideMarkers(controller.markers);
         //show markers of selected category
         controller.showVisible(controller.showMarkers);
-        console.log(controller.showMarkers);
 
         //this hides the categoryList and shows the list of selected categories
         controller.checkedCategoryToggle();
     }
     controller.backCategories = function(category) {
 
-      controller.slide = 'fadeLeft';
+        controller.slide = 'fadeLeft';
         //refreshes the map and show all
         controller.showVisible(controller.markers);
         controller.search = "";
         controller.checked = false;
 
-            controller.categoryListToggle();
+        controller.categoryListToggle();
 
     }
 
-    controller.backToSelectedcategories = function(category){
+    controller.backToSelectedcategories = function(category) {
 
-      controller.slide = 'fadeLeft';
-      console.log(category);
-    if (angular.isObject(category)==true){
-        controller.expandCheckedCategory(category);
-    }else{
-        controller.expandCategory(category);
+        controller.slide = 'fadeLeft';
+        if (angular.isObject(category) == true) {
+            controller.expandCheckedCategory(category);
+        } else {
+            controller.expandCategory(category);
 
-}
+        }
 
     }
-controller.searchData=[];
-controller.searchMarkersToshow = [];
-controller.emptySearchResult=false;
-controller.searchResources = function(search){
-    controller.searchData.length=0;
-    controller.searchMarkersToshow.length=0;
-    search = search.toString();
-    $http.get('/resource/' + search).then(function(response){
-    controller.searchData = response.data;
-    if (controller.searchData.length == 0){
-      var el = angular.element(document.querySelector('#emptySearch'));
-      el.empty();
-      el.append('<p>Sorry your search found empty result. Please try another keyword!</p>');
-      controller.emptySearchResult=true;
-    } else {
+    controller.searchData = [];
+    controller.searchMarkersToshow = [];
+    controller.emptySearchResult = false;
 
-        controller.searchData.forEach(function(searchedresource){
+    controller.searchResources = function(search) {
+        controller.searchData.length = 0;
+        controller.searchMarkersToshow.length = 0;
+        search = search.toString();
+        controller.resourceService.getSearchedResource(search).then(function(response) {
+            controller.searchData = response.data;
+            if (controller.searchData.length == 0) {
+                var el = angular.element(document.querySelector('#emptySearch'));
+                el.empty();
+                el.append('<p>Sorry your search found empty result. Please try another keyword!</p>');
+                controller.emptySearchResult = true;
+            } else {
 
-
-            controller.resources.forEach(function(resource){
-                if(searchedresource._id == resource._id){
-                    controller.searchData.push(resource);
-                    console.log(resource);
-                    controller.searchMarkersToshow.push(resource.marker);
-                }
-            })
-
-        }); //End of searchData forEach
+                controller.searchData.forEach(function(searchedresource) {
 
 
-        //hide all markers
-        controller.hideMarkers(controller.markers);
-        //show markers of selected category
-        controller.showVisible(controller.searchMarkersToshow);
-        controller.selectedCategoryToggle ();
+                    controller.resources.forEach(function(resource) {
+                        if (searchedresource._id == resource._id) {
+                            controller.searchData.push(resource);
+                            console.log(resource);
+                            controller.searchMarkersToshow.push(resource.marker);
+                        }
+                    })
 
-      };
+                }); //End of searchData forEach
 
-    });  //End of get resources
-}; //End of searchResources
+
+                //hide all markers
+                controller.hideMarkers(controller.markers);
+                //show markers of selected category
+                controller.showVisible(controller.searchMarkersToshow);
+                controller.selectedCategoryToggle();
+
+            };
+
+        }, function(error) {
+            console.log('error getting searched resource', error);
+        }); //End of getSearchedResource
+    }; //End of searchResources
 
 
     controller.searchAddress = function() {
-        console.log(addressInput);
         var addressInput = document.getElementById('address-input').value;
 
         var distance = parseFloat(controller.distance);
@@ -419,9 +413,9 @@ controller.searchResources = function(search){
         });
     }
 
-controller.getId = function(id){
-  controller.id = id;
-};
+    controller.getId = function(id) {
+        controller.id = id;
+    };
 
 
     // target element
@@ -431,98 +425,91 @@ controller.getId = function(id){
     var currentRating = 0;
 
     // max rating, i.e. number of stars you want
-    var maxRating= 5;
+    var maxRating = 5;
 
     // callback to run after setting the rating
     var callback = function(rating) {
-      controller.starReview = rating
-     };
+        controller.starReview = rating
+    };
 
     // rating instance
     var myRating = rating(el, currentRating, maxRating, callback);
 
-// sets rating and doesn't run callback
-    // myRating.setRating(3, false);
-    //
-    // myRating.getRating();
+    controller.createReview = function(review, id) {
 
-
-    controller.createReview = function(review, id){
-      console.log('id', controller.id);
-      var body = {
-        resource_id: controller.id,
-        rating: controller.starReview,
-        comments: review
-      }
-      controller.reviewNotes = '';
-      console.log(body);
-          $http.post('/publicreviews', body
-        ).then(function(){
-        console.log('success posting');
-        controller.sendMail(body);
-          myRating.setRating(el, 0, 5, false);
+        var body = {
+            resource_id: controller.id,
+            rating: controller.starReview,
+            comments: review
+        }
+        controller.reviewNotes = '';
+        controller.reviewsService.createReview(body).then(function() {
+            //Send notification email
+            controller.sendMail(body);
+            //Empty review form
+            myRating.setRating(el, 0, 5, false);
         }, function(error) {
-          console.log('error creating review', error);
+            console.log('error creating review', error);
         });
-    }
+    }; //End of createReview
 
     controller.sendMail = function(data) {
-            $http.post('/publicreviews/mail', data).then(function(results) {
-                console.log(results);
-            });
-        }; // end sendMail
+        controller.reviewsService.sendEmail(data).then(function(results) {}, function(error) {
+            console.log('error sending email', error);
+        });
+    }; // end sendMail
 
 
-//show all ratings for the resource selected
-    controller.getSelectedRating = function (resource) {
-    //get review array of that id in the .review property
-    controller.selectedReviewArrays = resource.review;
+    //show all ratings for the resource selected
+    controller.getSelectedRating = function(resource) {
+        //get review array of that id in the .review property
+        controller.selectedReviewArrays = resource.review;
 
     };
 
 } //End of HomeController
 
 angular.module('blueWatchApp')
-.directive('starRating', function () {
-    return {
-        restrict: 'AE',
-        template: '<ul class="rating">' +
-            '<li ng-repeat="star in stars" ng-class="star" >' +
-            '\u2605' +
-            '</li>' +
-            '</ul>',
-        scope: {
-            ratingValue: '=',
-            max: '=',
-            // onRatingSelected: '&'
-        },
-        link: function (scope, elem, attrs) {
+    .directive('starRating', function() {
+        return {
+            restrict: 'AE',
+            template: '<ul class="rating">' +
+                '<li ng-repeat="star in stars" ng-class="star" >' +
+                '\u2605' +
+                '</li>' +
+                '</ul>',
+            scope: {
+                ratingValue: '=',
+                max: '=',
+                // onRatingSelected: '&'
+            },
+            link: function(scope, elem, attrs) {
 
-            var updateStars = function () {
-                scope.stars = [];
-                for (var i = 0; i < scope.max; i++) {
-                    scope.stars.push({
-                        filled: i < scope.ratingValue,
-                         half: scope.ratingValue % 1 > 0 && i === Math.floor(scope.ratingValue)
-                    });
-                }
-            };
-            scope.toggle = function (index) {
-               scope.ratingValue = index + 1;
-            //    scope.onRatingSelected({
-            //        rating: index + 1
-            //    });
-           };
+                var updateStars = function() {
+                    scope.stars = [];
+                    for (var i = 0; i < scope.max; i++) {
+                        scope.stars.push({
+                            filled: i < scope.ratingValue,
+                            half: scope.ratingValue % 1 > 0 && i === Math.floor(scope.ratingValue)
+                        });
+                    }
+                };
+                scope.toggle = function(index) {
+                    scope.ratingValue = index + 1;
+                    //    scope.onRatingSelected({
+                    //        rating: index + 1
+                    //    });
+                };
 
-           scope.$watch('ratingValue', function (newVal, oldVal) {
+                scope.$watch('ratingValue', function(newVal, oldVal) {
 
-               if (newVal) {
-                   updateStars();
-               } else if(newVal == '' ){
-                   updateStars();
-               }
+                    if (newVal) {
+                        updateStars();
+                    } else if (newVal == '') {
+                        updateStars();
+                    }
 
-           });
-       }
-   }
-});
+                });
+            }
+        }
+    });
