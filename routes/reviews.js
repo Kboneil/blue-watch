@@ -18,9 +18,7 @@ router.get('/', function(req, res) {
 });
 
 router.delete('/:id', function(req, res) {
-  console.log('deleting a review');
   var id = req.params.id;
-  console.log(id);
 
 //finds all users inside admin database
   Review.remove({ "_id" : id }).then(function(review){
@@ -33,9 +31,7 @@ router.delete('/:id', function(req, res) {
 });
 
 router.put('/:id', function(req, res) {
-  console.log('approved review');
   var id = req.params.id;
-  console.log(req.body);
 
   Review.findById(id, function(err, review){
       if (err){

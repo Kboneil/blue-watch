@@ -65,9 +65,8 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     //sets where the map is located, type and zoom
 
     var mapOptions = {
-        center: new google.maps.LatLng(38.62452, -90.18514),
-        // center: new google.maps.LatLng(44.9778, 93.2650), //this lat/long to center of cities - jsm
-        zoom: 5, //zoom level to show most - jsm
+        center: new google.maps.LatLng(44.9778,-93.2650),
+        zoom: 5,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
 
         panControl: true,
@@ -99,7 +98,6 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
             controller.resources = response.data;
 
             controller.resources.forEach(function(info) {
-
                 var id = info._id;
 
                 controller.reviewsService.getPublicReviews(id).then(function(response) {
@@ -201,7 +199,6 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
             marker.setVisible(false);
             controller.closeInfoWindow();
         });
-
     };
 
     controller.showVisible = function(controllerMarkers) {
@@ -229,9 +226,7 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
     //show marker when company name is clicked
     controller.openInfoWindow = function($event, selectedMarker, resource) {
         event.preventDefault();
-
         google.maps.event.trigger(selectedMarker, 'click');
-
     }
 
     controller.expandCategory = function(category) {
@@ -248,19 +243,15 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
                 controller.selectedCategoryArray.push(resource);
                 controller.showMarkers.push(resource.marker);
             }
-
         });
 
         //hide all markers
         controller.hideMarkers(controller.markers);
 
-
         //show markers of selected category
         controller.showVisible(controller.showMarkers);
 
-
         //this hides the categoryList and shows the list of selected categories
-
         controller.selectedCategoryToggle();
     }
 
@@ -335,7 +326,6 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
             controller.expandCheckedCategory(category);
         } else {
             controller.expandCategory(category);
-
         }
 
     }
@@ -355,9 +345,7 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
                 el.append('<p>Sorry your search found empty result. Please try another keyword!</p>');
                 controller.emptySearchResult = true;
             } else {
-
                 controller.searchData.forEach(function(searchedresource) {
-
 
                     controller.resources.forEach(function(resource) {
                         if (searchedresource._id == resource._id) {
@@ -366,16 +354,13 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
                             controller.searchMarkersToshow.push(resource.marker);
                         }
                     })
-
                 }); //End of searchData forEach
-
 
                 //hide all markers
                 controller.hideMarkers(controller.markers);
                 //show markers of selected category
                 controller.showVisible(controller.searchMarkersToshow);
                 controller.selectedCategoryToggle();
-
             };
 
         }, function(error) {
@@ -386,7 +371,6 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
 
     controller.searchAddress = function() {
         var addressInput = document.getElementById('address-input').value;
-
         var distance = parseFloat(controller.distance);
         var geocoder = new google.maps.Geocoder();
 
@@ -459,12 +443,10 @@ function HomeController($http, $location, $scope, ResourcesService, LogoutServic
         });
     }; // end sendMail
 
-
     //show all ratings for the resource selected
     controller.getSelectedRating = function(resource) {
         //get review array of that id in the .review property
         controller.selectedReviewArrays = resource.review;
-
     };
 
 } //End of HomeController

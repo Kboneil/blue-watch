@@ -2,11 +2,9 @@ const router = require('express').Router();
 const Color = require('../models/colorSchema');
 
 router.get('/', function(req, res) {
-  console.log('getting icons');
 
 //finds all icons inside color database
   Color.find({}).then(function(icons){
-    // console.log('icons ', icons);
         res.send(icons);
 
   }).catch(function(err){
@@ -17,9 +15,7 @@ router.get('/', function(req, res) {
 
 //update color
 router.put('/:id', function(req, res) {
-  console.log('updating color');
   var id = req.params.id;
-  console.log(id);
 
   Color.findById(id, function(err, category){
       if (err){

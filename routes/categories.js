@@ -4,11 +4,8 @@ const Color = require('../models/colorSchema');
 const Resources = require('../models/resourceSchema');
 
 router.get('/', function(req, res) {
-    console.log('getting categories');
-
     //finds all categories inside category database
     Categories.find({}).then(function(categories) {
-        // console.log('categories ', categories);
         res.send(categories);
 
     }).catch(function(err) {
@@ -18,7 +15,6 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-    console.log('creating new category');
 
     var category = new Categories({
         categoryName: req.body.categoryName,
@@ -37,11 +33,9 @@ router.post('/', function(req, res) {
         Color.find({
             'color': color
         }).then(function(color) {
-            console.log(color);
             color[0].inUse = true;
 
             color[0].save(function(err, updatedInUse) {
-                console.log('color updated!', updatedInUse);
                 if (err) {
                     res.sendStatus(500);
                     return;
@@ -50,9 +44,6 @@ router.post('/', function(req, res) {
 
 
         }); //End of color find
-
-
-
 
     }).catch(function(err) {
         console.log('Error getting review', err);
@@ -63,16 +54,13 @@ router.post('/', function(req, res) {
 
 //update category route
 router.put('/:id', function(req, res) {
-    console.log('updating category');
     var id = req.params.id;
-    // console.log(id);
 
     Categories.findById(id, function(err, category) {
         if (err) {
             res.sendStatus(500);
             return;
         }
-
 
         //set values
         var categoryName = req.body.categoryName;
@@ -82,7 +70,6 @@ router.put('/:id', function(req, res) {
         category.color = color;
 
         category.save(function(err, updatedCategory) {
-            console.log('category updated', updatedCategory);
             if (err) {
                 res.sendStatus(500);
                 return;
@@ -98,24 +85,18 @@ router.put('/:id', function(req, res) {
                     }]
                 }).then(function(colors) {
 
-                    console.log(colors);
-
                     for (var i = 0; i < colors.length; i++) {
                         if (colors[i].color == req.body.color) {
                             colors[i].inUse = true;
-                            console.log('new color', colors[i]);
                         } else if (colors[i].color == req.body.oldColor) {
                             colors[i].inUse = false;
-                            console.log('old Color', colors[i]);
                         }
 
                         colors[i].save(function(err, updatedInUse) {
-                            console.log('color updated!', updatedInUse);
                             if (err) {
                                 res.sendStatus(500);
                                 return;
                             }
-
                         }); // End of color saved
 
                     } //end of for loop
@@ -135,7 +116,6 @@ router.put('/:id', function(req, res) {
                     multi: true
                 })
                 .then(function(response, err) {
-                    console.log('Resources updated', response);
                     if (err) {
                         res.sendStatus(500);
                         return;

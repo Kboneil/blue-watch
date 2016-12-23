@@ -164,38 +164,10 @@
                     <div class="form-group">
                         <label class="control-label col-xs-3">Pick a map marker</label>
                         <div class="col-xs-7">
-                                <!-- <select ng-model="resources.icon" ng-options ="color.color for color in resources.icons track by $index">
-                                    <option  data-image="{{color.icon}}" value="{{color.color}}">{{color.color}}</option>
-                                </select> -->
                           <select ng-model="resources.color" class="form-control">
                               <option ng-if="!markers.inUse"  ng-repeat="markers in resources.customIconInfo" value="{{markers.color}}"> {{markers.color}}</option>
                           </select>
-
-
-
-                          <!-- other way to style dropdown -->
-                          <!-- <div class="multiple-select-wrapper">
-                            <div class="selected-items-box">
-                                                      <span class="dropdown-icon"></span>
-                                                      <ul class="items-list">
-                                                          <li >
-                                                              <img ng-src="{{resources.capturedMarker.icon}}" /><span>{{resources.capturedMarker.color}}</span>
-                                                          </li>
-                                                          <span ng-show="(markers | filter: getSelectedItemsOnly).length > 3" title="See more selections..">...</span>
-                                                      </ul>
-                                                  </div>
-                                  <div class="list">
-                                           <ul class="items-list">
-                                                  <li ng-repeat="markers in resources.openIcons">
-                                                          <input type="button" ng-click="resources.selectedColor(marker.color)" ng-model="marker.color" />
-                                                         <img ng-src="{{markers.pin}}" />
-                          				<span>{{markers.color}}</span>
-                          			</li>
-                          		</ul>
-                          	</div>
-                          </div>
- -->
-                         </div>
+                       </div>
                     </div>
 
             </form>
@@ -228,15 +200,12 @@
                 </thead>
                 <tr ng-repeat = "category in resources.categories" adapter="adapter">
                     <td><input type="text" class="form-control" ng-model="category.categoryName"/></td>
-                    <!-- <td><input type="text" class="form-control" ng-model="category.color" /></td> -->
-
                     <td>
                     <select class="form-control" ng-change="resources.captureOldColor(category.color)" ng-model="category.newColor" ng-init="category.newColor=category.color">
                         <option  value="{{category.color}}" disabled selected>{{category.color}}</option>
                         <option ng-if="!markers.inUse" ng-repeat="markers in resources.customIconInfo" value="{{markers.color}}"> {{markers.color}}</option>
                     </select>
                         </td>
-                    <!-- <select ng-model="resources.color" class="form-control">  <option ng-repeat="markers in resources.openIcons" data-image="{{markers.pin}}" value="{{markers.color}}">{{markers.color}}</option> </select> -->
                     <td>
                         <button ng-click="resources.updateCategory(category)" href="#editCategory" data-toggle="modal" class="btn btn-default">Save</button>
                     </td>

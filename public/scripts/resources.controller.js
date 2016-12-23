@@ -13,12 +13,8 @@ function ResourcesController($http, $location, $q, ResourcesService, $scope, adm
 
     controller.iconColor = '';
 
-
-
     //whenever controller is loaded, will check to see if user which/if any user is logged in
     adminservice.normalLoggedin();
-
-
 
     controller.getResources = function() {
 
@@ -260,37 +256,6 @@ function ResourcesController($http, $location, $q, ResourcesService, $scope, adm
             });
         });
     };
-
-
-
-    // other way to show dropdown functionality
-
-    //   $('.selected-items-box').bind('click', function(e){
-    //     e.stopPropagation();
-    //     $('.multiple-select-wrapper .list').toggle('slideDown');
-    //   });
-    //
-    //   $('.multiple-select-wrapper .list').bind('click', function(e){
-    //   	e.stopPropagation();
-    //     	$('.multiple-select-wrapper .list').slideUp();
-    //   });
-    //
-    //   $(document).bind('click', function(){
-    //   	$('.multiple-select-wrapper .list').slideUp();
-    //   });
-    //
-    // controller.selectedColor=function(marker){
-    //     controller.capturedMarker=marker;
-    //     console.log(marker);
-    // }
-
-
-
-
-
-
-
-
 
 } //End of ResourcesController
 

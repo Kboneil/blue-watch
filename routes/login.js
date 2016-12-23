@@ -6,7 +6,6 @@ router.post('/', passport.authenticate('local'), function(req, res){
 });
 
 router.get('/info', function(req, res) {
-    console.log(req.body);
   if (req.isAuthenticated()){
     var user = {
       firstName: req.user.firstName,
@@ -15,7 +14,6 @@ router.get('/info', function(req, res) {
       accessLevel:req.user.accessLevel
     }
     return res.send(user);
-    console.log(user);
   }
   res.sendStatus(401);
 });
