@@ -84,6 +84,12 @@ function ResourcesService($http) {
         });
     }; //End of getIcons
 
+    service.setColorInUse = function(color) {
+        return $http.put('/icons/'+ color).then(function(response) {
+            return response;
+        });
+    }; //End of getIcons
+
     service.getcategories = function() {
         return $http.get('/categories').then(function(response) {
             return response;

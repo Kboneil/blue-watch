@@ -2,7 +2,7 @@ angular.module('blueWatchApp')
     .controller('ResourcesController', ResourcesController);
 
 
-function ResourcesController($http, $location, $q, ResourcesService, $scope, adminservice) {
+function ResourcesController($q, ResourcesService, $scope, adminservice) {
 
     var controller = this;
     controller.categories = [];
@@ -218,18 +218,29 @@ function ResourcesController($http, $location, $q, ResourcesService, $scope, adm
 
 
     //find id to pass into delete category model confirmation
-    controller.findCategoryId = function(id) {
+    controller.findCategoryId = function(id, color) {
         idToDelete = id;
+        colorToDelete=color;
     };
     // delete category
     controller.deleteCategory = function() {
         controller.resourcesService.deleteCategory(idToDelete).then(function(response) {
-            controller.getcategories();
-            controller.getIcons();
+
+            controller.setColorInUse(colorToDelete);
+
         }, function(error) {
             console.log('error deleting category');
         }); //End of deleteCategory service
     }; //End of deleteCategory
+
+    controller.setColorInUse = function(colorToDelete){
+      controller.resourcesService.setColorInUse(colorToDelete).then(function(response) {
+        controller.getcategories();
+          controller.getIcons();
+      }, function(error) {
+          console.log('error getting icons', error);
+      });
+    };
 
 
     controller.verifyAddress = function(address) {
