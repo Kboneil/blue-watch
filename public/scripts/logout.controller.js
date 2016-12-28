@@ -10,7 +10,7 @@ function LogoutController($http, $location, adminservice, LogoutService) {
 
     $http.get('/logout')
     .then(function(){
-      adminservice.user = "";
+      adminservice.firstName = "";
       adminservice.isLoggedIn = false;
       adminservice.accessLevel = false;
       $location.path('/login');
