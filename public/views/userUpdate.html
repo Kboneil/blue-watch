@@ -1,78 +1,33 @@
 <div id="adminPage">
-<h2>User Update</h2>
-
-
-
-<div ng-controller="AdminSetupController as admin">
-<table >
-    <thead>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-        <th></th>
-    </thead>
-
-      <td >
-          {{admin.adminservice.firstName}}
-      </td>
-      <td>
-        {{admin.adminservice.lastName}}
-      </td>
-
-        <td >
-          {{admin.adminservice.email}}
-        </td>
-        <td>
-            <button ng-click="admin.captureInfo(admin.adminservice._id, admin.adminservice.firstName, admin.adminservice.lastName, admin.adminservice.email, admin.adminservice.password)" href="#editAdmin" data-toggle="modal" class="btn btn-default pull-right">Edit</button>
-        </td>
-    </tr>
-</table>
-</div>
-
-
-<div id="editAdmin" class="modal fade">
-    <div id="login" class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title text-center">Edit Admin Information</h4>
+    <h2>Password Update</h2>
+    <form class="form-horizontal col-xs-12 col-md-12">
+        <div class="form-group row">
+            <label class="control-label col-xs-offset-1 col-xs-2">First Name:</label>
+            <div class="col-xs-7">
+                {{admin.adminservice.firstName}}
+                <!-- <input class="form-control" type="text" ng-model="admin.capturedFirstName" autocomplete="on" placeholder="{{admin.capturedFirstName}}"> -->
             </div>
-            <div class="modal-body modal-background-color text-center">
-
-                <form class="form-horizontal col-xs-12 col-md-12  well">
-                    <div class="form-group row">
-                        <label class="control-label col-xs-offset-1 col-xs-2">First Name:</label>
-                        <div class="col-xs-7">
-                            <input class="form-control" type="text" ng-model="admin.capturedFirstName" autocomplete="on" placeholder="{{admin.capturedFirstName}}">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-xs-offset-1 col-xs-2">Last Name:</label>
-                        <div class="col-xs-7">
-                            <input class="form-control" type="text" ng-model="admin.capturedLastName" autocomplete="on" placeholder="{{admin.capturedLastName}}">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-xs-offset-1 col-xs-2">Email:</label>
-                        <div class="col-xs-7">
-                            <input class="form-control" type="text" ng-model="admin.capturedEmail" autocomplete="on" placeholder="{{admin.capturedEmail}}">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label class="control-label col-xs-offset-1 col-xs-2">Password:</label>
-                        <div class="col-xs-7">
-                            <input class="form-control" type="password" ng-model="admin.password" placeholder="****">
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-              <button ng-click="admin.updateUser(admin.capturedFirstName, admin.capturedLastName, admin.capturedEmail, admin.password)" type="submit" class="btn btn-default pull-right" data-dismiss="modal">Update</button>
-
-            </div>
-
         </div>
-    </div>
-</div>
-</div>
+        <div class="form-group row">
+            <label class="control-label col-xs-offset-1 col-xs-2">Last Name:</label>
+            <div class="col-xs-7">
+                {{admin.adminservice.lastName}}
+                <!-- <input class="form-control" type="text" ng-model="admin.capturedLastName" autocomplete="on" placeholder="{{admin.capturedLastName}}"> -->
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-xs-offset-1 col-xs-2">Email:</label>
+            <div class="col-xs-7">
+                {{admin.adminservice.email}}
+                <!-- <input class="form-control" type="text" ng-model="admin.capturedEmail" autocomplete="on" placeholder="{{admin.capturedEmail}}"> -->
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="control-label col-xs-offset-1 col-xs-2">Password:</label>
+            <div class="col-xs-7">
+                <input class="form-control" type="password" ng-model="admin.password" placeholder="****">
+            </div>
+        </div>
+        <button ng-click="admin.updatePassword(admin.adminservice.id, admin.password)" type="submit" class="btn btn-default pull-right" data-dismiss="modal">Update</button>
+
+    </form>

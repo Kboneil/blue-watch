@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="blueWatchApp">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="vendors/jquery.min.js"></script>
@@ -33,50 +34,51 @@
     <script src="scripts/adminSetup.controller.js"></script>
     <script src="scripts/resources.service.js"></script>
     <script src="scripts/reviews.service.js"></script>
-      <script src="scripts/logout.service.js"></script>
+    <script src="scripts/logout.service.js"></script>
 
     <title>Blue Watch</title>
 
     <base href="/" />
-  </head>
-  <body>
-      <div class="container">
-        <div class="row col-xs-12" id="bigDiv" style="width: 100%; margin-left: 0; background-color: white; padding: 0; height: 100%">
-        <header>
-        <img href="http://bluewatchus.org/" alt="Bluewatch Logo" class="bluewatchLogo" src="/assets/img/logo.jpg">
-        <h2>Blue Watch - Wellness Resources and Family Support for Law Enforcement</h2>
-      </header>
+</head>
 
-      <nav ng-show="logout.homePage.status" class="navbar navbar-default" ng-controller="LogoutController as logout">
-        <div id="hamburger">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+<body>
+    <div class="container">
+        <div class="row col-xs-12" id="bigDiv" style="width: 100%; margin-left: 0; background-color: white; padding: 0; height: 100%">
+            <header>
+                <img href="http://bluewatchus.org/" alt="Bluewatch Logo" class="bluewatchLogo" src="/assets/img/logo.jpg">
+                <h2>Blue Watch - Wellness Resources and Family Support for Law Enforcement</h2>
+            </header>
+
+            <nav ng-show="logout.homePage.status" class="navbar navbar-default" ng-controller="LogoutController as logout">
+                <div id="hamburger">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-          </div>
-         <div class="collapse navbar-collapse" id="myNavbar" ng-controller="AdminSetupController as admin">
-            <ol class="nav navbar-nav navbar-left">
-              <li><a href="/home">Map</a></li>
-              <li><a href="/resources">Resources</a></li>
-              <li><a href="/userUpdate">User Update</a></li>
-              <li ng-if ="admin.adminservice.accessLevel" ><a href="/approval">Approvals</a></li>
-              <li ng-if ="admin.adminservice.accessLevel" ><a href="/adminSetup">Admins</a></li>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar" ng-controller="AdminSetupController as admin">
+                    <ol class="nav navbar-nav navbar-left">
+                        <li><a href="/home">Map</a></li>
+                        <li><a href="/resources">Resources</a></li>
+                        <li ng-if="admin.adminservice.accessLevel"><a href="/approval">Approvals</a></li>
+                        <li ng-if="admin.adminservice.accessLevel"><a href="/adminSetup">Admins</a></li>
 
-              </ol>
-            <ol class="nav navbar-nav navbar-right" >
-              <li><a id="email">{{admin.adminservice.firstName}}</a></li>
-              <li ng-hide="admin.adminservice.isLoggedIn"><a href="/login">log in</a></li>
-              <li ng-show="admin.adminservice.isLoggedIn" ng-click="logout.logout()"><a href="">Logout</a></li>
-            </ol>
-          </div>
-        </nav>
+                    </ol>
+                    <ol class="nav navbar-nav navbar-right">
+                        <li><a id="email">{{admin.adminservice.firstName}}</a></li>
+                        <li ng-hide="admin.adminservice.isLoggedIn"><a href="/login">log in</a></li>
+                        <li ng-show="admin.adminservice.isLoggedIn" ng-click="logout.logout()"><a href="">Logout</a></li>
+                    </ol>
+                </div>
+            </nav>
 
-        <div ng-view style="padding: 0 20px; background-color:white;"></div>
-
+            <div ng-view style="padding: 0 20px; background-color:white;"></div>
 
 
+
+        </div>
     </div>
-    </div>
-  </body>
+</body>
+
 </html>

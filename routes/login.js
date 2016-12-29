@@ -14,12 +14,43 @@ router.get('/info', function(req, res) {
             firstName: req.user.firstName,
             lastName: req.user.lastName,
             email: req.user.email,
-            accessLevel: req.user.accessLevel
-        }
-        return res.send(user);
+            accessLevel: req.user.accessLevel,
+            loggedInDate: req.user.loggedInDate,
+            _id: req.user._id
+        };
+        res.send(user);
+        console.log(user);
+
+    } else {
+        res.sendStatus(401);
     }
-    res.sendStatus(401);
 });
+
+router.put('/update/:id', function(req, res) {
+    console.log('updating admin user');
+    var id = req.params.id;
+    console.log(id);
+
+    Admin.findById(id, function(err, user) {
+        if (err) {
+            res.sendStatus(500);
+            return;
+        }
+        //set values
+        user.password = req.body.password;
+        user.loggedInDate = new Date();
+
+
+        user.save(function(err, updatedUser) {
+            if (err) {
+                res.sendStatus(500);
+                return;
+            }
+            res.send(updatedUser);
+        });
+    });
+});
+
 
 router.post('/mail', function(req, res) {
     var email = req.body.email;
@@ -35,6 +66,7 @@ router.post('/mail', function(req, res) {
         }
 
         user[0].password = randomPassword;
+        user[0].loggedInDate = '';
         user[0].save().then(function(people) {
 
 

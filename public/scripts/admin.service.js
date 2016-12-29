@@ -10,15 +10,19 @@ angular.module('blueWatchApp')
 
         adminservice.isLoggedIn = false;
         adminservice.accessLevel = false;
+        adminservice.loggedInDate = '';
 
         adminservice.loggedin = function() {
             return $http.get('/admin/adminSchema').then(function(response) {
-              console.log('response', response);
-              adminservice.id = response.data._id;
+                console.log('response', response);
+                adminservice.id = response.data._id;
+                console.log(adminservice.id);
 
                 adminservice.firstName = response.data.firstName;
                 adminservice.lastName = response.data.lastName;
                 adminservice.email = response.data.email;
+                adminservice.loggedInDate = response.data.loggedInDate;
+                console.log(adminservice.loggedInDate);
 
                 adminservice.isLoggedIn = true;
                 if (response.data.accessLevel == 'no') {
@@ -38,7 +42,14 @@ angular.module('blueWatchApp')
 
         adminservice.normalLoggedin = function() {
             return $http.get('/login/info').then(function(response) {
+                adminservice.id = response.data._id;
+                console.log(adminservice.id);
+
                 adminservice.firstName = response.data.firstName;
+                adminservice.lastName = response.data.lastName;
+                adminservice.email = response.data.email;
+                adminservice.loggedInDate = response.data.loggedInDate;
+                console.log(adminservice.loggedInDate);
                 adminservice.isLoggedIn = true;
                 if (response.data.accessLevel == 'no') {
                     adminservice.accessLevel = false;
@@ -79,5 +90,11 @@ angular.module('blueWatchApp')
                 return response;
             });
         }; //End of deleteUser
+
+        adminservice.updatePassword = function(id, password) {
+            return $http.put('/login/update/' + id, password).then(function(response) {
+                return response;
+            });
+        }
 
     }); //End of service function

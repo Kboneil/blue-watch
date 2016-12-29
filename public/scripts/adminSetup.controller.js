@@ -1,7 +1,7 @@
 angular.module('blueWatchApp')
     .controller('AdminSetupController', AdminSetupController);
 
-function AdminSetupController(adminservice) {
+function AdminSetupController(adminservice, $location) {
     console.log('AdminSetupController loaded!');
     $(document).ready(function() {
         $('[data-toggle="popover"]').popover();
@@ -50,7 +50,7 @@ function AdminSetupController(adminservice) {
 
     admin.getUsers();
 
-//capturen info on modal click
+    //capturen info on modal click
     admin.captureInfo = function(id, firstName, lastName, email, password, access) {
         admin.capturedId = id;
         admin.capturedFirstName = firstName;
@@ -91,6 +91,21 @@ function AdminSetupController(adminservice) {
             admin.getUsers();
         });
     }; //End of deleteUser
+
+    admin.updatePassword = function(id, password) {
+        var data = {
+            password: password
+        };
+        admin.adminservice.updatePassword(id, data).then(function(response) {
+            console.log('successfully updated password', response);
+            $location.path('/resources');
+
+            // empty form
+            admin.password = '';
+
+
+        });
+    }
 
 
 

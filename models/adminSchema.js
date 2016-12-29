@@ -8,7 +8,7 @@ const adminSchema = new mongoose.Schema({
   lastName: String,
   email: {type: mongoose.SchemaTypes.Email, required:true},
   password: String,
-
+  loggedInDate: Date,
   accessLevel: String,
 }, {collection: 'admin'});
 
