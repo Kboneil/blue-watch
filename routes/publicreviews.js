@@ -51,10 +51,11 @@ router.post('/mail', function(req,res){
           console.log('Message sent: ' + info.response);
 
         }
+          res.send(info.response);
       }); // end sendMail
 
     }
-        res.send(info.response);
+
 
   }).catch(function(err){
     console.log('Error in /mail', err);

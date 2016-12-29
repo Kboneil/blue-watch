@@ -4,6 +4,7 @@ angular.module('blueWatchApp')
 function LoginController($http, $location, adminservice) {
   console.log('LoginController loaded');
   var controller = this;
+    controller.adminservice = adminservice;
 
   //whenever controller is loaded, will check to see if user which/if any user is logged in
     // adminservice.loggedin();
@@ -11,7 +12,7 @@ function LoginController($http, $location, adminservice) {
 
 //logged in email to display
   controller.loggedInEmail = function(){
-    adminservice.loggedin().then(function(response){
+  adminservice.loggedin().then(function(response){
     }, function(error){
       $location.path('/login');
     });
@@ -31,6 +32,16 @@ function LoginController($http, $location, adminservice) {
     });
   };
 
-  controller.adminservice = adminservice;
+  controller.forgotPasswordEmail=function(email){
+    var body ={
+      email:email
+    };
+  $http.post('/login/mail',body).then(function(response){
+    }, function(error){
+      console.log('error in searching email', error);
+  });
+};
+
+
 
 }

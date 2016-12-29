@@ -49,7 +49,6 @@ app.use('/categories', categories);
 app.use('/icons', icons);
 
 
-//This is duplicate
 app.get('/', function(req, res){
   res.sendFile(path.join(__dirname, './public/views/index.html'));
 });
@@ -64,11 +63,6 @@ app.get('/*', function(req, res){
 
 // everything beyond this point must be authenticated
 app.use(ensureAuthenticated);
-
-
-// app.get('/resources', function(req, res){
-//   res.sendFile('logged in');
-// });
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
