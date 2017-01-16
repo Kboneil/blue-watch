@@ -17,3 +17,10 @@
 - Passport.js
 - Bootstrap
 - Sass
+
+###Contributors
+
+- Paul Katchmark (https://github.com/PaulKatchmark)
+- Levy Kohout (https://github.com/levykohout)
+- Julie S. Mike (https://github.com/motbsitu)
+- Kelly O'Neil (https://github.com/Kboneil/)
