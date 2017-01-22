@@ -92,21 +92,7 @@ function AdminSetupController(adminservice, $location) {
         });
     }; //End of deleteUser
 
-    admin.updatePassword = function(id, password) {
-        var data = {
-            password: password
-        };
-        admin.adminservice.updatePassword(id, data).then(function(response) {
-            console.log('successfully updated password', response);
-            $location.path('/resources');
-
-            // empty form
-            admin.password = '';
-
-
-        });
-    }
-
+  
 
 
 }; // End of AdminSetupController
