@@ -5,6 +5,7 @@ function LoginController($http, $location, adminservice) {
     console.log('LoginController loaded');
     var controller = this;
     controller.adminservice = adminservice;
+    controller.showFailLoginAlert = false;
 
     //whenever controller is loaded, will check to see if user which/if any user is logged in
     // adminservice.loggedin();
@@ -23,6 +24,7 @@ function LoginController($http, $location, adminservice) {
             email: controller.email,
             password: controller.password,
         }).then(function() {
+          controller.showFailLoginAlert = false;
             controller.loggedInEmail();
             adminservice.normalLoggedin();
             if (adminservice.loggedInDate == undefined || adminservice.loggedInDate == '' || adminservice.loggedInDate == null) {
@@ -31,6 +33,7 @@ function LoginController($http, $location, adminservice) {
                 $location.path('/resources');
             }
         }, function(error) {
+          controller.showFailLoginAlert = true;
             console.log('error loggin in', error);
         });
     };
@@ -45,6 +48,14 @@ function LoginController($http, $location, adminservice) {
             console.log('error in searching email', error);
         });
     };
+
+    controller.successTextAlert = "Some content";
+
+
+ // switch flag
+ controller.switchBool = function (value) {
+     controller.showFailLoginAlert = !controller.showFailLoginAlert;
+ };
 
 
 
