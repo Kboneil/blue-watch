@@ -5,17 +5,27 @@ function LoginController($http, $location, adminservice) {
     console.log('LoginController loaded');
     var controller = this;
     controller.adminservice = adminservice;
+    controller.showFailLoginAlert = false;
+    controller.firstLoggedInAlert = true;
+    controller.adminservice.id;
 
-    //whenever controller is loaded, will check to see if user which/if any user is logged in
-    // adminservice.loggedin();
+    controller.adminservice.firstName;
+    controller.adminservice.lastName;
+    controller.adminservice.email;
+
 
 
     //logged in email to display
     controller.loggedInEmail = function() {
-        adminservice.loggedin().then(function(response) {}, function(error) {
+      console.log('check user');
+        controller.adminservice.normalLoggedin().then(function(response) {
+
+        }, function(error) {
             $location.path('/login');
         });
     };
+    //whenever controller is loaded, will check to see if user which/if any user is logged in
+controller.loggedInEmail();
 
     controller.login = function() {
         console.log('logging in');
@@ -23,14 +33,16 @@ function LoginController($http, $location, adminservice) {
             email: controller.email,
             password: controller.password,
         }).then(function() {
-            controller.loggedInEmail();
-            adminservice.normalLoggedin();
+          controller.showFailLoginAlert = false;
+            controller.adminservice.normalLoggedin();
             if (adminservice.loggedInDate == undefined || adminservice.loggedInDate == '' || adminservice.loggedInDate == null) {
+                console.log(controller.firstLoggedInAlert);
                 $location.path('/userUpdate');
             } else {
                 $location.path('/resources');
             }
         }, function(error) {
+          controller.showFailLoginAlert = true;
             console.log('error loggin in', error);
         });
     };
@@ -45,6 +57,30 @@ function LoginController($http, $location, adminservice) {
             console.log('error in searching email', error);
         });
     };
+
+
+ // switch flag
+ controller.switchBool = function (value) {
+     controller.showFailLoginAlert = !controller.showFailLoginAlert;
+     controller.firstLoggedInAlert = !controller.firstLoggedInAlert;
+ };
+
+ controller.updatePassword = function(id, password) {
+     var data = {
+         password: password
+     };
+     controller.adminservice.updatePassword(id, data).then(function(response) {
+         console.log('successfully updated password', response);
+         $location.path('/resources');
+
+         // empty form
+         controller.password = '';
+
+
+     });
+ }
+
+
 
 
 

@@ -1,33 +1,39 @@
 <div id="adminPage">
     <h2>Password Update</h2>
+    <div class="alert text-center row" ng-if="login.firstLoggedInAlert">
+            <button type="button" class="close" ng-click="login.switchBool('login.firstLoggedInAlert')">×</button> <strong>It looks like you just logged in with a temporary password. We recommend that you change your password</strong>
+    </div>
     <form class="form-horizontal col-xs-12 col-md-12">
         <div class="form-group row">
             <label class="control-label col-xs-offset-1 col-xs-2">First Name:</label>
             <div class="col-xs-7">
-                {{admin.adminservice.firstName}}
+                {{login.adminservice.firstName}}
                 <!-- <input class="form-control" type="text" ng-model="admin.capturedFirstName" autocomplete="on" placeholder="{{admin.capturedFirstName}}"> -->
             </div>
         </div>
         <div class="form-group row">
             <label class="control-label col-xs-offset-1 col-xs-2">Last Name:</label>
             <div class="col-xs-7">
-                {{admin.adminservice.lastName}}
+                {{login.adminservice.lastName}}
                 <!-- <input class="form-control" type="text" ng-model="admin.capturedLastName" autocomplete="on" placeholder="{{admin.capturedLastName}}"> -->
             </div>
         </div>
         <div class="form-group row">
             <label class="control-label col-xs-offset-1 col-xs-2">Email:</label>
             <div class="col-xs-7">
-                {{admin.adminservice.email}}
+                {{login.adminservice.email}}
                 <!-- <input class="form-control" type="text" ng-model="admin.capturedEmail" autocomplete="on" placeholder="{{admin.capturedEmail}}"> -->
             </div>
         </div>
         <div class="form-group row">
             <label class="control-label col-xs-offset-1 col-xs-2">Password:</label>
             <div class="col-xs-7">
-                <input class="form-control" type="password" ng-model="admin.password" placeholder="****">
+                <input class="form-control" type="password" ng-model="login.password" placeholder="****">
             </div>
         </div>
-        <button ng-click="admin.updatePassword(admin.adminservice.id, admin.password)" type="submit" class="btn btn-default pull-right" data-dismiss="modal">Update</button>
+        <button ng-click="login.updatePassword(login.adminservice.id, login.password)" type="submit" class="btn btn-default pull-right">Update</button>
 
     </form>
+
+  </div>
+    </div>

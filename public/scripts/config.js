@@ -35,7 +35,7 @@ angular.module('blueWatchApp').config(function($routeProvider, $locationProvider
     }
   }).when('/userUpdate', {
     templateUrl: 'views/userUpdate.html',
-    controller: 'AdminSetupController as admin',
+    controller: 'LoginController as login',
   }).otherwise({
     templateUrl: 'views/home.html',
     controller: 'HomeController as home'

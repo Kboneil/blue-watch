@@ -21,6 +21,10 @@
   </div>
   </div>
 </form>
+
+<div class="alert alert-danger text-center" ng-show="login.showFailLoginAlert">
+        <button type="button" class="close" data-ng-click="login.switchBool('login.showFailLoginAlert')">×</button> <strong>Login failed! Please check your email and password and try again. If you forgot your password, use forgot password link above.</strong>
+
 </div>
 
 <div id="forgotPassword" class="modal fade">
@@ -31,7 +35,7 @@
                 <h4 class="modal-title text-center">Verify Email Information</h4>
             </div>
             <div class="modal-body modal-background-color text-center">
-
+                <p><em>Please provide your registered email address. You will receive an email notification with your temporary password or contact your administrator if you don't have one.</em></p>
                     <div class="form-group row">
                         <label class="control-label col-xs-offset-1 col-xs-2">Email:</label>
                         <div class="col-xs-7">
